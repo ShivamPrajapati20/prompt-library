@@ -1,0 +1,115 @@
+[
+  {
+    "prompt_id": "code-reviewer-security",
+    "input": "def login(u, p):\n    q = f'SELECT * FROM users WHERE user={u} AND pass={p}'\n    ",
+    "output": "**Issue 1: SQL Injection** | Severity: HIGH\nVulnerability: User input is directly interpolated into SQL query, allowing attackers to manipulate the query logic and bypass authentication or extract data.\n\nFix:\n```python\ndef login(u, p):\n    q = 'SELECT * FROM users WHERE user=? AND pass=?'\n    return db.execute(q, (u, p))\n```\n\n**Issue 2: Plain Text Password Storage** | Severity: HIGH\nVulnerability: Passwords are stored and compared in plain text, exposing them if the database is compromised.\n\nFix:\n```python\nfrom werkzeug.security import check_password_hash\n\ndef login(u, p):\n    q = 'SELECT * FROM users WHERE user=?'\n    user = db.execute(q, (u,)).fetchone()\n    if user and check_password_hash(user['pass'], p):\n        return user\n    return None\n```",
+    "tokens": 391,
+    "latency_s": 2.07,
+    "timestamp": "2026-04-08T21:40:18.918908"
+  },
+  {
+    "prompt_id": "code-reviewer-security",
+    "input": "x = 1 + 1",
+    "output": "No security issues found\n\nThis is a simple arithmetic assignment with no security vulnerabilities.",
+    "tokens": 161,
+    "latency_s": 0.82,
+    "timestamp": "2026-04-08T21:40:35.184161"
+  },
+  {
+    "prompt_id": "slack-to-email",
+    "input": "yo the deploy broke prod again lol can someone look at this asap",
+    "output": "Subject: Production Deployment Issue - Immediate Attention Required\n\nDear Team,\n\nWe are experiencing a production environment failure following the latest deployment. We need someone to investigate and address this issue as soon as possible.\n\nPlease prioritize this matter and provide an update on your findings.\n\nThank you,",
+    "tokens": 183,
+    "latency_s": 1.32,
+    "timestamp": "2026-04-08T21:40:47.628725",
+    "quality_score": 1
+  },
+  {
+    "prompt_id": "commit-message",
+    "input": "Added retry logic with exponential backoff to the payment API",
+    "output": "feat(payment-api): add retry logic with exponential backoff",
+    "tokens": 101,
+    "latency_s": 0.77,
+    "timestamp": "2026-04-08T21:40:54.993298"
+  },
+  {
+    "prompt_id": "resume-bullet",
+    "input": "Worked on the backend APIs and improved response time",
+    "output": "Engineered backend APIs reducing response time by 40%.",
+    "tokens": 126,
+    "latency_s": 0.66,
+    "timestamp": "2026-04-08T21:41:06.360652"
+  },
+  {
+    "prompt_id": "sentiment-classifier",
+    "input": "This product completely changed my workflow!",
+    "output": "positive",
+    "tokens": 41,
+    "latency_s": 0.5,
+    "timestamp": "2026-04-08T21:41:08.423216"
+  },
+  {
+    "prompt_id": "sentiment-classifier",
+    "input": "Broke after two days. Terrible quality.",
+    "output": "negative",
+    "tokens": 44,
+    "latency_s": 0.69,
+    "timestamp": "2026-04-08T21:41:10.004332"
+  },
+  {
+    "prompt_id": "sentiment-classifier",
+    "input": "It works as described.",
+    "output": "neutral",
+    "tokens": 39,
+    "latency_s": 0.5,
+    "timestamp": "2026-04-08T21:41:13.309543"
+  },
+  {
+    "prompt_id": "sql-explainer",
+    "input": "SELECT u.name, COUNT(o.id) FROM users u LEFT JOIN orders o ON u.id = o.user_id G",
+    "output": "# Breaking Down This Query\n\n**SELECT u.name, COUNT(o.id)**\n- Shows each user's name and counts how many orders they have\n\n**FROM users u LEFT JOIN orders o ON u.id = o.user_id**\n- Starts with the users table, then connects it to the orders table\n- \"LEFT JOIN\" means: keep ALL users, even those with zero orders\n- The ON clause is the connector: match orders where the user_id equals the user's id\n\n**GROUP BY u.name**\n- Bundles up all rows for each user together\n- This is what lets COUNT() work per user instead of counting everything\n\n**HAVING COUNT(o.id) > 5**\n- Filters the results AFTER grouping\n- Only shows users who have more than 5 orders\n- (HAVING filters grouped data; WHERE filters before grouping)\n\n## Real-World Analogy\nImagine gathering all customers and their receipts into piles (GROUP BY), counting receipts in each pile (COUNT), then only keeping piles with 6+ receipts (HAVING). The LEFT JOIN ensures you count even the customer with zero receipts\u2014they just get a count of 0.\n\n**Result:** A list of customer names with their order counts, but only those who ordered 6+ times.",
+    "tokens": 445,
+    "latency_s": 3.81,
+    "timestamp": "2026-04-08T21:41:18.960111"
+  },
+  {
+    "prompt_id": "error-debugger",
+    "input": "TypeError: 'NoneType' object is not subscriptable\nCode: data = fetch_user(id)\npr",
+    "output": "Root cause: `fetch_user()` is returning `None` instead of a dictionary, so you cannot access it with the `['name']` subscript.\n\nFix:\n```python\ndata = fetch_user(id)\nif data is not None:\n    print(data['name'])\nelse:\n    print(\"User not found\")\n```\n\nWhy: The function either failed to fetch data or explicitly returns `None`, which needs to be checked before attempting subscript access.",
+    "tokens": 272,
+    "latency_s": 1.8,
+    "timestamp": "2026-04-08T21:41:24.080819"
+  },
+  {
+    "prompt_id": "linkedin-post",
+    "input": "I just built my first AI chatbot in Python using the Claude API",
+    "output": "# I built my first AI chatbot and realized I've been overcomplicating things\n\nMost developers think building AI requires deep learning expertise. It doesn't\u2014I had a working chatbot in 2 hours with zero ML background.\n\nThe Claude API was embarrassingly simple. A few lines of Python, an API key, and suddenly my code could understand context, ask clarifying questions, and actually sound intelligent. No model training. No GPU sweating. Just prompt \u2192 response.\n\nThe hardest part wasn't the AI\u2014it was deciding what to build. I spent more time writing prompts to shape the bot's personality than I did on the actual code. Turns out the magic isn't in the engineering; it's in being specific about what you want the bot to do.\n\nWhat surprised me most? The bot understood nuance I didn't explicitly teach it. I asked it to \"be helpful but skeptical\" and it genuinely was. No fine-tuning required.\n\nThis changes what's possible for solo developers. You don't need a research PhD to ship AI features anymore. Just clarity on the problem and an afternoon.\n\n**What's stopping you from building your first AI project\u2014the technical part, or just not knowing what to build?**",
+    "tokens": 417,
+    "latency_s": 3.86,
+    "timestamp": "2026-04-08T21:41:29.958324"
+  },
+  {
+    "prompt_id": "api-doc-writer",
+    "input": "POST /chat endpoint that accepts messages array and personality string, returns ",
+    "output": "# POST /chat\n\n## Description\nSend messages to chat endpoint with personality configuration. Returns streaming text response.\n\n## Endpoint\n```\nPOST /chat\n```\n\n## Request Body\n```json\n{\n  \"messages\": [\n    {\n      \"role\": \"user|assistant|system\",\n      \"content\": \"string\"\n    }\n  ],\n  \"personality\": \"string\"\n}\n```\n\n### Parameters\n\n| Name | Type | Required | Description |\n|------|------|----------|-------------|\n| `messages` | array | Yes | Conversation history. Each message requires `role` and `content` fields. |\n| `personality` | string | Yes | System personality/behavior template. Examples: \"helpful\", \"technical\", \"creative\". |\n\n## Response\n\n**Status: 200 OK**\n\nStreaming text response (chunked transfer encoding).\n\n```\nContent-Type: text/event-stream\n\ndata: {\"type\":\"text\",\"content\":\"Hello\"}\ndata: {\"type\":\"text\",\"content\":\" there\"}\ndata: {\"type\":\"done\"}\n```\n\n## Error Responses\n\n| Status | Error | Description |\n|--------|-------|-------------|\n| `400` | `INVALID_REQUEST` | Missing or malformed `messages` or `personality` field. |\n| `401` | `UNAUTHORIZED` | Missing or invalid authentication token. |\n| `429` | `RATE_LIMITED` | Request rate limit exceeded. Retry after delay. |\n| `500` | `SERVER_ERROR` | Internal server error. Try request again later. |\n\n## Example\n\n**Request:**\n```bash\ncurl -X POST https://api.example.com/chat \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer TOKEN\" \\\n  -d '{\n    \"messages\": [\n      {\"role\": \"user\", \"content\": \"What is React?\"}\n    ],\n    \"personality\": \"technical\"\n  }'\n```\n\n**Response:**\n```\ndata: {\"type\":\"text\",\"content\":\"React\"}\ndata: {\"type\":\"text\",\"content\":\" is\"}\ndata: {\"type\":\"text\",\"content\":\" a JavaScript library...\"}\ndata: {\"type\":\"done\"}\n```",
+    "tokens": 588,
+    "latency_s": 5.05,
+    "timestamp": "2026-04-08T21:41:37.447069"
+  },
+  {
+    "prompt_id": "concept-explainer",
+    "input": "What is a transformer in AI?",
+    "output": "**Simple:** A transformer is a robot brain that learns by paying attention to the most important words in a sentence, one at a time.\n\n**Technical:** A transformer is a neural network architecture that processes sequences using self-attention mechanisms to compute weighted relationships between all input tokens in parallel, enabling it to capture long-range dependencies without recurrence.\n\n**Example:** When reading \"The bank executive walked into the river bank,\" a transformer pays special attention to context clues. It recognizes that \"river bank\" makes \"executive\" less relevant to the second \"bank,\" so it weights those attention connections lower. This is how ChatGPT understands that the same word means different things in different contexts.",
+    "tokens": 276,
+    "latency_s": 2.32,
+    "timestamp": "2026-04-08T21:41:41.147442"
+  },
+  {
+    "prompt_id": "concept-explainer",
+    "input": "What is a vector embedding?",
+    "output": "**Simple:** A vector embedding is like turning words or pictures into a long list of numbers that computers can compare to find similar things.\n\n**Technical:** A vector embedding is a dense numerical representation of high-dimensional data (text, images, audio) in a lower-dimensional space where semantic similarity is preserved as geometric proximity.\n\n**Example:** When you search \"king - man + woman\" in an embedding model trained on text, it produces a vector closer to \"queen\" than to \"king\" because the model learned that gender relationships follow consistent patterns in the number space. Similarly, if you embed images of dogs, all dog photos will cluster near each other numerically, while cat photos cluster separately\u2014even though the model never explicitly learned the rule \"dogs are similar.\"\n\nThis enables recommendation systems (Netflix), search engines, and AI chatbots to understand meaning beyond simple keyword matching.",
+    "tokens": 312,
+    "latency_s": 2.8,
+    "timestamp": "2026-04-08T21:41:44.720994"
+  }
+]
